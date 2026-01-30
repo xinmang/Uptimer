@@ -190,6 +190,9 @@ jobs:
         run: |
           set -euo pipefail
 
+          # Keep the workspace clean: write a temp config file instead of modifying the repo.
+          echo "WRANGLER_CI_CONFIG=$RUNNER_TEMP/wrangler.ci.toml" >> "$GITHUB_ENV"
+
           python3 - <<'PY'
           import os
           import pathlib
@@ -197,7 +200,7 @@ jobs:
           import sys
 
           src = pathlib.Path("apps/worker/wrangler.toml")
-          dst = pathlib.Path("apps/worker/wrangler.ci.toml")
+          dst = pathlib.Path(os.environ["WRANGLER_CI_CONFIG"])
 
           worker_name = os.environ["WORKER_NAME"]
           d1_binding = os.environ.get("D1_BINDING", "DB")
@@ -263,21 +266,23 @@ jobs:
         working-directory: apps/worker
         run: |
           set -euo pipefail
-          pnpm exec wrangler d1 migrations apply "$D1_NAME" --remote --config wrangler.ci.toml
+          pnpm exec wrangler d1 migrations apply "$D1_NAME" --remote --config "$WRANGLER_CI_CONFIG"
 
       - name: Deploy Worker (idempotent)
+        id: deploy_worker
         shell: bash
         working-directory: apps/worker
         run: |
           set -euo pipefail
           # Capture output so we can derive workers.dev URL for the web build (optional).
-          deploy_out="$(pnpm exec wrangler deploy --config wrangler.ci.toml --keep-vars 2>&1)"
+          deploy_out="$(pnpm exec wrangler deploy --config "$WRANGLER_CI_CONFIG" --keep-vars 2>&1)"
           echo "$deploy_out"
 
           # Best-effort parse; if it fails we can still use a user-provided API base.
           worker_url="$(echo "$deploy_out" | grep -oE 'https://[^ ]+\\.workers\\.dev' | head -n1 || true)"
           if [[ -n "$worker_url" ]]; then
             echo "WORKER_URL=$worker_url" >> "$GITHUB_ENV"
+            echo "worker_url=$worker_url" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Upsert Worker secrets (optional)
@@ -286,7 +291,7 @@ jobs:
         working-directory: apps/worker
         run: |
           set -euo pipefail
-          printf '%s' "$UPTIMER_ADMIN_TOKEN" | pnpm exec wrangler secret put ADMIN_TOKEN --name "$WORKER_NAME" --config wrangler.ci.toml
+          printf '%s' "$UPTIMER_ADMIN_TOKEN" | pnpm exec wrangler secret put ADMIN_TOKEN --name "$WORKER_NAME" --config "$WRANGLER_CI_CONFIG"
 
       - name: Compute web API base (for Vite build)
         shell: bash
@@ -304,6 +309,7 @@ jobs:
           echo "VITE_API_BASE=$api_base" >> "$GITHUB_ENV"
         env:
           UPTIMER_API_BASE: ${{ vars.UPTIMER_API_BASE }}
+          WORKER_URL: ${{ steps.deploy_worker.outputs.worker_url }}
 
       - name: Build Pages (Vite)
         working-directory: apps/web
@@ -348,4 +354,5 @@ jobs:
             --project-name "$PAGES_PROJECT" \
             --branch "$DEFAULT_BRANCH" \
             --commit-hash "$GITHUB_SHA" \
-            --commit-message "$GITHUB_SHA"
+            --commit-message "$GITHUB_SHA" \
+            --commit-dirty=true
