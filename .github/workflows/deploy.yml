@@ -27,11 +27,25 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version-file: ".node-version"
-          cache: "pnpm"
 
       - uses: pnpm/action-setup@v4
         with:
           version: "10.8.1"
+
+      - name: Resolve pnpm store path
+        id: pnpm_store
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "path=$(pnpm store path --silent)" >> "$GITHUB_OUTPUT"
+
+      - name: Cache pnpm store
+        uses: actions/cache@v4
+        with:
+          path: ${{ steps.pnpm_store.outputs.path }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-store-
 
       - name: Install
         run: pnpm install --frozen-lockfile
