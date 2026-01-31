@@ -122,14 +122,14 @@ function MonitorDetail({ monitorId, onClose }: { monitorId: number; onClose: () 
           </div>
         ) : data ? (
           <>
-            <div className="flex gap-6 mb-6">
-              <div className="bg-slate-50 dark:bg-slate-700/50 rounded-lg px-4 py-3">
+            <div className="grid grid-cols-2 gap-3 sm:gap-6 mb-6">
+              <div className="bg-slate-50 dark:bg-slate-700/50 rounded-lg px-3 sm:px-4 py-2.5 sm:py-3">
                 <div className="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-1">Avg Latency</div>
-                <div className="text-lg font-semibold text-slate-900 dark:text-slate-100">{data.avg_latency_ms ?? '-'}ms</div>
+                <div className="text-base sm:text-lg font-semibold text-slate-900 dark:text-slate-100">{data.avg_latency_ms ?? '-'}ms</div>
               </div>
-              <div className="bg-slate-50 dark:bg-slate-700/50 rounded-lg px-4 py-3">
+              <div className="bg-slate-50 dark:bg-slate-700/50 rounded-lg px-3 sm:px-4 py-2.5 sm:py-3">
                 <div className="text-xs text-slate-500 dark:text-slate-400 uppercase tracking-wide mb-1">P95 Latency</div>
-                <div className="text-lg font-semibold text-slate-900 dark:text-slate-100">{data.p95_latency_ms ?? '-'}ms</div>
+                <div className="text-base sm:text-lg font-semibold text-slate-900 dark:text-slate-100">{data.p95_latency_ms ?? '-'}ms</div>
               </div>
             </div>
             <LatencyChart points={data.points} />
@@ -178,17 +178,17 @@ function IncidentDetail({
 }) {
   return (
     <div
-      className="fixed inset-0 bg-slate-900/60 dark:bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in"
+      className="fixed inset-0 bg-slate-900/60 dark:bg-black/70 backdrop-blur-sm flex items-end sm:items-center justify-center p-0 sm:p-4 z-50 animate-fade-in"
       onClick={onClose}
     >
       <div
-        className="bg-white dark:bg-slate-800 rounded-2xl shadow-soft-lg max-w-2xl w-full p-6 max-h-[85vh] overflow-y-auto animate-slide-up"
+        className="bg-white dark:bg-slate-800 rounded-t-2xl sm:rounded-2xl shadow-soft-lg w-full sm:max-w-2xl p-5 sm:p-6 max-h-[90vh] overflow-y-auto animate-slide-up"
         onClick={(e) => e.stopPropagation()}
       >
-        <div className="flex justify-between items-start mb-6">
+        <div className="flex justify-between items-start mb-4 sm:mb-6">
           <div>
-            <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-2">{incident.title}</h2>
-            <div className="flex items-center gap-2">
+            <h2 className="text-lg sm:text-xl font-semibold text-slate-900 dark:text-slate-100 mb-2">{incident.title}</h2>
+            <div className="flex flex-wrap items-center gap-2">
               <Badge variant={incident.impact === 'critical' || incident.impact === 'major' ? 'down' : 'paused'}>{incident.impact}</Badge>
               <Badge variant="info">{incident.status}</Badge>
             </div>
@@ -203,19 +203,19 @@ function IncidentDetail({
           </button>
         </div>
 
-        <div className="space-y-3 text-sm text-slate-600 dark:text-slate-300 mb-6 pb-6 border-b border-slate-100 dark:border-slate-700">
-          <div className="flex gap-2">
-            <span className="text-slate-400 dark:text-slate-500 w-20">Affected:</span>
-            <span>{incident.monitor_ids.map((id) => monitorNames.get(id) ?? `#${id}`).join(', ')}</span>
+        <div className="space-y-2 sm:space-y-3 text-sm text-slate-600 dark:text-slate-300 mb-4 sm:mb-6 pb-4 sm:pb-6 border-b border-slate-100 dark:border-slate-700">
+          <div className="flex flex-col sm:flex-row sm:gap-2">
+            <span className="text-slate-400 dark:text-slate-500 sm:w-20 text-xs sm:text-sm">Affected:</span>
+            <span className="text-sm">{incident.monitor_ids.map((id) => monitorNames.get(id) ?? `#${id}`).join(', ')}</span>
           </div>
-          <div className="flex gap-2">
-            <span className="text-slate-400 dark:text-slate-500 w-20">Started:</span>
-            <span>{new Date(incident.started_at * 1000).toLocaleString()}</span>
+          <div className="flex flex-col sm:flex-row sm:gap-2">
+            <span className="text-slate-400 dark:text-slate-500 sm:w-20 text-xs sm:text-sm">Started:</span>
+            <span className="text-sm">{new Date(incident.started_at * 1000).toLocaleString()}</span>
           </div>
           {incident.resolved_at && (
-            <div className="flex gap-2">
-              <span className="text-slate-400 dark:text-slate-500 w-20">Resolved:</span>
-              <span>{new Date(incident.resolved_at * 1000).toLocaleString()}</span>
+            <div className="flex flex-col sm:flex-row sm:gap-2">
+              <span className="text-slate-400 dark:text-slate-500 sm:w-20 text-xs sm:text-sm">Resolved:</span>
+              <span className="text-sm">{new Date(incident.resolved_at * 1000).toLocaleString()}</span>
             </div>
           )}
         </div>
@@ -288,13 +288,14 @@ export function StatusPage() {
       <header className="bg-white dark:bg-slate-800 border-b border-slate-100 dark:border-slate-700">
         <div className="max-w-5xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center">
           <h1 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-slate-100">Uptimer</h1>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1">
             <ThemeToggle />
             <Link
               to="/admin"
-              className="text-sm text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors px-3 py-1.5 -mr-3 rounded-lg active:bg-slate-100 dark:active:bg-slate-700"
+              className="flex items-center justify-center h-9 text-sm text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors px-3 rounded-lg"
             >
-              Admin
+              <svg className="w-5 h-5 sm:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" /><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+              <span className="hidden sm:inline">Admin</span>
             </Link>
           </div>
         </div>

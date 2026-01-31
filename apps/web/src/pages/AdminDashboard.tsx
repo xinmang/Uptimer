@@ -87,11 +87,20 @@ export function AdminDashboard() {
       <header className="bg-white dark:bg-slate-800 border-b border-slate-100 dark:border-slate-700">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center">
           <h1 className="text-lg sm:text-xl font-bold text-slate-900 dark:text-slate-100">Admin Dashboard</h1>
-          <div className="flex items-center gap-2 sm:gap-4">
+          <div className="flex items-center gap-1">
             <ThemeToggle />
-            <Link to="/admin/analytics" className="text-sm text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors px-2 py-1.5 rounded-lg active:bg-slate-100 dark:active:bg-slate-700">Analytics</Link>
-            <Link to="/" className="text-sm text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 transition-colors px-2 py-1.5 rounded-lg active:bg-slate-100 dark:active:bg-slate-700">Status</Link>
-            <button onClick={logout} className="text-sm text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 transition-colors px-2 py-1.5 rounded-lg active:bg-red-50 dark:active:bg-red-900/20">Logout</button>
+            <Link to="/admin/analytics" className="flex items-center justify-center h-9 text-sm text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors px-3 rounded-lg">
+              <svg className="w-5 h-5 sm:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
+              <span className="hidden sm:inline">Analytics</span>
+            </Link>
+            <Link to="/" className="flex items-center justify-center h-9 text-sm text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors px-3 rounded-lg">
+              <svg className="w-5 h-5 sm:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+              <span className="hidden sm:inline">Status</span>
+            </Link>
+            <button onClick={logout} className="flex items-center justify-center h-9 text-sm text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors px-3 rounded-lg">
+              <svg className="w-5 h-5 sm:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+              <span className="hidden sm:inline">Logout</span>
+            </button>
           </div>
         </div>
       </header>
@@ -148,9 +157,11 @@ export function AdminDashboard() {
                           <td className="px-3 sm:px-4 py-3 text-sm text-slate-500 dark:text-slate-400 truncate max-w-[200px]">{m.target}</td>
                           <td className="px-3 sm:px-4 py-3"><Badge variant={m.is_active ? 'up' : 'unknown'}>{m.is_active ? 'Active' : 'Paused'}</Badge></td>
                           <td className="px-3 sm:px-4 py-3 text-right whitespace-nowrap">
-                            <button onClick={() => { setTestingMonitorId(m.id); testMonitorMut.mutate(m.id); }} disabled={testingMonitorId === m.id} className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 disabled:opacity-50 px-1.5 py-1">{testingMonitorId === m.id ? 'Testing...' : 'Test'}</button>
-                            <button onClick={() => { createMonitorMut.reset(); updateMonitorMut.reset(); setModal({ type: 'edit-monitor', monitor: m }); }} className="text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 px-1.5 py-1">Edit</button>
-                            <button onClick={() => confirm('Delete?') && deleteMonitorMut.mutate(m.id)} className="text-sm text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 px-1.5 py-1">Delete</button>
+                            <div className="flex items-center justify-end gap-1 sm:gap-0">
+                              <button onClick={() => { setTestingMonitorId(m.id); testMonitorMut.mutate(m.id); }} disabled={testingMonitorId === m.id} className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 disabled:opacity-50 px-2 sm:px-2.5 py-1.5 rounded-md transition-colors">{testingMonitorId === m.id ? 'Testing...' : 'Test'}</button>
+                              <button onClick={() => { createMonitorMut.reset(); updateMonitorMut.reset(); setModal({ type: 'edit-monitor', monitor: m }); }} className="text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 px-2 sm:px-2.5 py-1.5 rounded-md transition-colors">Edit</button>
+                              <button onClick={() => confirm('Delete?') && deleteMonitorMut.mutate(m.id)} className="text-sm text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20 px-2 sm:px-2.5 py-1.5 rounded-md transition-colors">Delete</button>
+                            </div>
                           </td>
                         </tr>
                       ))}
@@ -191,8 +202,10 @@ export function AdminDashboard() {
                           <td className="px-3 sm:px-4 py-3"><Badge variant="info">{ch.type}</Badge></td>
                           <td className="px-3 sm:px-4 py-3 text-sm text-slate-500 dark:text-slate-400 truncate max-w-[200px]">{ch.config_json.url}</td>
                           <td className="px-3 sm:px-4 py-3 text-right whitespace-nowrap">
-                            <button onClick={() => { setTestingChannelId(ch.id); testChannelMut.mutate(ch.id); }} disabled={testingChannelId === ch.id} className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 disabled:opacity-50 px-1.5 py-1">{testingChannelId === ch.id ? 'Testing...' : 'Test'}</button>
-                            <button onClick={() => setModal({ type: 'edit-channel', channel: ch })} className="text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 px-1.5 py-1">Edit</button>
+                            <div className="flex items-center justify-end gap-1 sm:gap-0">
+                              <button onClick={() => { setTestingChannelId(ch.id); testChannelMut.mutate(ch.id); }} disabled={testingChannelId === ch.id} className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 disabled:opacity-50 px-2 sm:px-2.5 py-1.5 rounded-md transition-colors">{testingChannelId === ch.id ? 'Testing...' : 'Test'}</button>
+                              <button onClick={() => setModal({ type: 'edit-channel', channel: ch })} className="text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 px-2 sm:px-2.5 py-1.5 rounded-md transition-colors">Edit</button>
+                            </div>
                           </td>
                         </tr>
                       ))}
@@ -235,9 +248,11 @@ export function AdminDashboard() {
                           <td className="px-3 sm:px-4 py-3"><Badge variant={it.status === 'resolved' ? 'up' : 'paused'}>{it.status}</Badge></td>
                           <td className="px-3 sm:px-4 py-3"><Badge variant={it.impact === 'critical' ? 'down' : it.impact === 'major' ? 'down' : 'paused'}>{it.impact}</Badge></td>
                           <td className="px-3 sm:px-4 py-3 text-right whitespace-nowrap">
-                            <button onClick={() => setModal({ type: 'add-incident-update', incident: it })} disabled={it.status === 'resolved'} className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 disabled:opacity-50 px-1.5 py-1">Update</button>
-                            <button onClick={() => setModal({ type: 'resolve-incident', incident: it })} disabled={it.status === 'resolved'} className="text-sm text-emerald-600 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300 disabled:opacity-50 px-1.5 py-1">Resolve</button>
-                            <button onClick={() => confirm(`Delete "${it.title}"?`) && deleteIncidentMut.mutate(it.id)} className="text-sm text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 px-1.5 py-1">Delete</button>
+                            <div className="flex items-center justify-end gap-1 sm:gap-0">
+                              <button onClick={() => setModal({ type: 'add-incident-update', incident: it })} disabled={it.status === 'resolved'} className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 hover:bg-blue-50 dark:hover:bg-blue-900/20 disabled:opacity-50 px-2 sm:px-2.5 py-1.5 rounded-md transition-colors">Update</button>
+                              <button onClick={() => setModal({ type: 'resolve-incident', incident: it })} disabled={it.status === 'resolved'} className="text-sm text-emerald-600 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300 hover:bg-emerald-50 dark:hover:bg-emerald-900/20 disabled:opacity-50 px-2 sm:px-2.5 py-1.5 rounded-md transition-colors">Resolve</button>
+                              <button onClick={() => confirm(`Delete "${it.title}"?`) && deleteIncidentMut.mutate(it.id)} className="text-sm text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20 px-2 sm:px-2.5 py-1.5 rounded-md transition-colors">Delete</button>
+                            </div>
                           </td>
                         </tr>
                       ))}
@@ -283,8 +298,10 @@ export function AdminDashboard() {
                             <td className="px-3 sm:px-4 py-3 text-xs text-slate-500 dark:text-slate-400 whitespace-nowrap">{new Date(w.starts_at * 1000).toLocaleString()} – {new Date(w.ends_at * 1000).toLocaleString()}</td>
                             <td className="px-3 sm:px-4 py-3"><Badge variant={state === 'Active' ? 'maintenance' : state === 'Upcoming' ? 'paused' : 'unknown'}>{state}</Badge></td>
                             <td className="px-3 sm:px-4 py-3 text-right whitespace-nowrap">
-                              <button onClick={() => setModal({ type: 'edit-maintenance', window: w })} className="text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 px-1.5 py-1">Edit</button>
-                              <button onClick={() => confirm(`Delete "${w.title}"?`) && deleteMaintenanceMut.mutate(w.id)} className="text-sm text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 px-1.5 py-1">Delete</button>
+                              <div className="flex items-center justify-end gap-1 sm:gap-0">
+                                <button onClick={() => setModal({ type: 'edit-maintenance', window: w })} className="text-sm text-slate-600 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 px-2 sm:px-2.5 py-1.5 rounded-md transition-colors">Edit</button>
+                                <button onClick={() => confirm(`Delete "${w.title}"?`) && deleteMaintenanceMut.mutate(w.id)} className="text-sm text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20 px-2 sm:px-2.5 py-1.5 rounded-md transition-colors">Delete</button>
+                              </div>
                             </td>
                           </tr>
                         );

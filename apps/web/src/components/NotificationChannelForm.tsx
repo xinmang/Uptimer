@@ -43,10 +43,10 @@ export function NotificationChannelForm({ channel, onSubmit, onCancel, isLoading
       </div>
 
       <div className="flex gap-3 pt-2">
+        <Button type="button" variant="secondary" onClick={onCancel} className="flex-1">Cancel</Button>
         <Button type="submit" disabled={isLoading} className="flex-1">
           {isLoading ? 'Saving...' : channel ? 'Update' : 'Create'}
         </Button>
-        <Button type="button" variant="secondary" onClick={onCancel} className="flex-1">Cancel</Button>
       </div>
     </form>
   );

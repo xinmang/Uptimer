@@ -13,6 +13,7 @@ import type { AnalyticsOverviewRange, AnalyticsRange } from '../api/types';
 import { DailyLatencyChart } from '../components/DailyLatencyChart';
 import { DailyUptimeChart } from '../components/DailyUptimeChart';
 import { LatencyChart } from '../components/LatencyChart';
+import { ThemeToggle } from '../components/ui';
 
 function formatPct(v: number): string {
   if (!Number.isFinite(v)) return '-';
@@ -82,15 +83,19 @@ export function AdminAnalytics() {
       <header className="bg-white dark:bg-slate-800 shadow-sm dark:shadow-none dark:border-b dark:border-slate-700">
         <div className="max-w-6xl mx-auto px-4 py-3 sm:py-4 flex justify-between items-center">
           <h1 className="text-lg sm:text-xl font-bold text-gray-900 dark:text-slate-100">Analytics</h1>
-          <div className="flex gap-2 sm:gap-4">
-            <Link to="/admin" className="text-sm text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-slate-100 px-2 py-1.5 rounded-lg active:bg-gray-100 dark:active:bg-slate-700">
-              Dashboard
+          <div className="flex items-center gap-1">
+            <ThemeToggle />
+            <Link to="/admin" className="flex items-center justify-center h-9 text-sm text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors px-3 rounded-lg">
+              <svg className="w-5 h-5 sm:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" /></svg>
+              <span className="hidden sm:inline">Dashboard</span>
             </Link>
-            <Link to="/" className="text-sm text-gray-600 dark:text-slate-400 hover:text-gray-900 dark:hover:text-slate-100 px-2 py-1.5 rounded-lg active:bg-gray-100 dark:active:bg-slate-700">
-              Status
+            <Link to="/" className="flex items-center justify-center h-9 text-sm text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-slate-100 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors px-3 rounded-lg">
+              <svg className="w-5 h-5 sm:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+              <span className="hidden sm:inline">Status</span>
             </Link>
-            <button onClick={logout} className="text-sm text-red-600 dark:text-red-400 hover:text-red-800 dark:hover:text-red-300 px-2 py-1.5 rounded-lg active:bg-red-50 dark:active:bg-red-900/20">
-              Logout
+            <button onClick={logout} className="flex items-center justify-center h-9 text-sm text-red-500 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 hover:bg-red-50 dark:hover:bg-red-900/20 transition-colors px-3 rounded-lg">
+              <svg className="w-5 h-5 sm:hidden" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" /></svg>
+              <span className="hidden sm:inline">Logout</span>
             </button>
           </div>
         </div>

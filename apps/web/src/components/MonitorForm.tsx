@@ -83,11 +83,11 @@ export function MonitorForm({ monitor, onSubmit, onCancel, isLoading, error }: M
       </div>
 
       <div className="flex gap-3 pt-2">
-        <Button type="submit" disabled={isLoading} className="flex-1">
-          {isLoading ? 'Saving...' : monitor ? 'Update' : 'Create'}
-        </Button>
         <Button type="button" variant="secondary" onClick={onCancel} className="flex-1">
           Cancel
+        </Button>
+        <Button type="submit" disabled={isLoading} className="flex-1">
+          {isLoading ? 'Saving...' : monitor ? 'Update' : 'Create'}
         </Button>
       </div>
     </form>
