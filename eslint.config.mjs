@@ -12,7 +12,10 @@ export default [
       "**/dist/**",
       "**/build/**",
       "**/.wrangler/**",
-      "**/coverage/**"
+      "**/coverage/**",
+      // Pages runtime files (service worker env) are not linted as browser/node.
+      "apps/web/public/**",
+      "apps/web/functions/**",
     ],
   },
   js.configs.recommended,
@@ -31,9 +34,9 @@ export default [
       "no-unused-vars": "off",
       "@typescript-eslint/no-unused-vars": [
         "error",
-        { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_" }
-      ]
-    }
+        { "argsIgnorePattern": "^_", "varsIgnorePattern": "^_" },
+      ],
+    },
   },
   {
     files: ["apps/web/**/*.{jsx,tsx}"],
@@ -55,8 +58,8 @@ export default [
     rules: {
       ...react.configs.recommended.rules,
       ...reactHooks.configs.recommended.rules,
-      "react/react-in-jsx-scope": "off"
-    }
+      "react/react-in-jsx-scope": "off",
+    },
   },
   {
     files: ["apps/worker/**/*.{js,ts}"],
@@ -67,4 +70,3 @@ export default [
     },
   },
 ];
-

@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query';
 import { Suspense, lazy, useState } from 'react';
 import { Link } from 'react-router-dom';
 
-import { fetchStatus, fetchLatency, fetchPublicIncidents } from '../api/client';
+import { fetchLatency, fetchStatus } from '../api/client';
 import type { Incident, MonitorStatus, PublicMonitor, StatusResponse } from '../api/types';
 import { HeartbeatBar } from '../components/HeartbeatBar';
 import { Markdown } from '../components/Markdown';
@@ -314,6 +314,49 @@ function IncidentDetail({
   );
 }
 
+
+function StatusPageSkeleton() {
+  return (
+    <div className="min-h-screen bg-slate-50 dark:bg-slate-900">
+      <header className="bg-white dark:bg-slate-800 border-b border-slate-100 dark:border-slate-700">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center">
+          <div className="h-6 w-28 bg-slate-200 dark:bg-slate-700 rounded" />
+          <div className="h-8 w-20 bg-slate-200 dark:bg-slate-700 rounded-full" />
+        </div>
+      </header>
+
+      <main className="max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-8">
+        <div className="h-20 sm:h-24 bg-slate-200 dark:bg-slate-700 rounded-2xl mb-8 animate-pulse" />
+
+        <section>
+          <div className="h-6 w-24 bg-slate-200 dark:bg-slate-700 rounded mb-4" />
+          <div className="grid gap-4 sm:grid-cols-2">
+            {Array.from({ length: 6 }).map((_, idx) => (
+              <Card key={idx} className="p-4 sm:p-5">
+                <div className="flex items-start justify-between mb-3 sm:mb-4">
+                  <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+                    <div className="h-3 w-3 bg-slate-200 dark:bg-slate-700 rounded-full" />
+                    <div className="min-w-0">
+                      <div className="h-5 w-40 bg-slate-200 dark:bg-slate-700 rounded mb-2" />
+                      <div className="h-3 w-12 bg-slate-200 dark:bg-slate-700 rounded" />
+                    </div>
+                  </div>
+                  <div className="h-6 w-16 bg-slate-200 dark:bg-slate-700 rounded-full" />
+                </div>
+                <div className="h-6 bg-slate-200 dark:bg-slate-700 rounded mb-3" />
+                <div className="flex justify-between">
+                  <div className="h-4 w-24 bg-slate-200 dark:bg-slate-700 rounded" />
+                  <div className="h-4 w-24 bg-slate-200 dark:bg-slate-700 rounded" />
+                </div>
+              </Card>
+            ))}
+          </div>
+        </section>
+      </main>
+    </div>
+  );
+}
+
 export function StatusPage() {
   const [selectedMonitorId, setSelectedMonitorId] = useState<number | null>(null);
   const [selectedIncident, setSelectedIncident] = useState<Incident | null>(null);
@@ -324,23 +367,19 @@ export function StatusPage() {
     refetchInterval: 30000,
   });
 
-  const incidentsQuery = useQuery({
-    queryKey: ['public-incidents'],
-    queryFn: () => fetchPublicIncidents(20),
-    refetchInterval: 30000,
-  });
-
   if (!data) {
+    if (isLoading) {
+      return <StatusPageSkeleton />;
+    }
+
     return (
       <div className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center">
         <div className="text-center">
           <div className="text-slate-700 dark:text-slate-200 text-lg font-medium mb-2">
-            {isLoading ? 'Loading...' : 'Failed to load status'}
+            Failed to load status
           </div>
-          <p className="text-slate-500 dark:text-slate-400 text-sm">
-            {isLoading ? 'Fetching data...' : 'Please try again later'}
-          </p>
-          {!isLoading && error && (
+          <p className="text-slate-500 dark:text-slate-400 text-sm">Please try again later</p>
+          {error && (
             <p className="text-slate-400 dark:text-slate-500 text-xs mt-2">{String(error)}</p>
           )}
         </div>
@@ -350,9 +389,8 @@ export function StatusPage() {
 
   const bannerConfig = getBannerConfig(data.banner.status);
   const monitorNames = new Map(data.monitors.map((m) => [m.id, m.name] as const));
-  const activeIncidents = (incidentsQuery.data?.incidents ?? []).filter(
-    (it) => it.status !== 'resolved',
-  );
+
+  const activeIncidents = data.active_incidents;
 
   return (
     <div className="min-h-screen bg-slate-50 dark:bg-slate-900">

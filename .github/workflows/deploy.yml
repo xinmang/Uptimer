@@ -369,6 +369,23 @@ jobs:
           echo "$output"
           exit "$code"
 
+
+      - name: Upsert Pages secret for HTML preload (best-effort)
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          api_origin="${UPTIMER_API_ORIGIN:-${WORKER_URL:-}}"
+          if [[ -z "$api_origin" ]]; then
+            echo "Skipping Pages secret: no UPTIMER_API_ORIGIN / WORKER_URL"
+            exit 0
+          fi
+
+          printf %s "$api_origin" | pnpm -C apps/worker exec wrangler --cwd ../.. pages secret put UPTIMER_API_ORIGIN --project-name "$PAGES_PROJECT"
+        env:
+          UPTIMER_API_ORIGIN: ${{ vars.UPTIMER_API_ORIGIN }}
+          WORKER_URL: ${{ steps.deploy_worker.outputs.worker_url }}
+
       - name: Deploy Pages (idempotent)
         shell: bash
         run: |
