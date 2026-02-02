@@ -3,6 +3,27 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="color-scheme" content="light dark" />
+    <script>
+      (function () {
+        try {
+          var key = "uptimer-theme";
+          var stored = localStorage.getItem(key);
+          var theme = stored === "light" || stored === "dark" || stored === "system" ? stored : "system";
+          var systemDark =
+            window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+          var isDark = theme === "dark" || (theme === "system" && systemDark);
+
+          var root = document.documentElement;
+          root.style.colorScheme = isDark ? "dark" : "light";
+          root.style.backgroundColor = isDark ? "#0f172a" : "#f8fafc";
+          if (isDark) root.classList.add("dark");
+          else root.classList.remove("dark");
+        } catch (_err) {
+          // ignore
+        }
+      })();
+    </script>
     <title>Uptimer</title>
   </head>
   <body>
@@ -10,4 +31,3 @@
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
-
