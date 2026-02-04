@@ -17,7 +17,7 @@ app.use('/api/*', async (c, next) => {
   if (origin) {
     c.header('Access-Control-Allow-Origin', origin);
     c.header('Vary', 'Origin');
-    c.header('Access-Control-Allow-Methods', 'GET,POST,PATCH,DELETE,OPTIONS');
+    c.header('Access-Control-Allow-Methods', 'GET,POST,PUT,PATCH,DELETE,OPTIONS');
     c.header('Access-Control-Allow-Headers', 'Authorization,Content-Type');
   }
 
