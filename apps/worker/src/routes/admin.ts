@@ -7,6 +7,7 @@ import {
   getDb,
   httpHeadersJsonSchema,
   monitors,
+  monitorState,
   parseDbJson,
   parseDbJsonNullable,
   serializeDbJson,
@@ -63,7 +64,10 @@ function queuePublicStatusSnapshotRefresh(c: { env: Env; executionCtx: Execution
   );
 }
 
-function monitorRowToApi(row: typeof monitors.$inferSelect) {
+function monitorRowToApi(
+  row: typeof monitors.$inferSelect,
+  state?: typeof monitorState.$inferSelect | null,
+) {
   return {
     id: row.id,
     name: row.name,
@@ -84,14 +88,28 @@ function monitorRowToApi(row: typeof monitors.$inferSelect) {
     is_active: row.isActive,
     created_at: row.createdAt,
     updated_at: row.updatedAt,
+
+    // Runtime state (denormalized from monitor_state for admin list).
+    status: state?.status ?? 'unknown',
+    last_checked_at: state?.lastCheckedAt ?? null,
+    last_latency_ms: state?.lastLatencyMs ?? null,
+    last_error: state?.lastError ?? null,
   };
 }
 
 adminRoutes.get('/monitors', async (c) => {
   const limit = z.coerce.number().int().min(1).max(200).optional().default(50).parse(c.req.query('limit'));
   const db = getDb(c.env);
-  const rows = await db.select().from(monitors).orderBy(monitors.id).limit(limit).all();
-  return c.json({ monitors: rows.map(monitorRowToApi) });
+
+  const rows = await db
+    .select({ monitor: monitors, state: monitorState })
+    .from(monitors)
+    .leftJoin(monitorState, eq(monitorState.monitorId, monitors.id))
+    .orderBy(monitors.id)
+    .limit(limit)
+    .all();
+
+  return c.json({ monitors: rows.map((r) => monitorRowToApi(r.monitor, r.state)) });
 });
 
 adminRoutes.get('/settings/uptime-rating', async (c) => {
@@ -175,7 +193,7 @@ adminRoutes.post('/monitors', async (c) => {
 
   queuePublicStatusSnapshotRefresh(c);
 
-  return c.json({ monitor: monitorRowToApi(inserted) }, 201);
+  return c.json({ monitor: monitorRowToApi(inserted, null) }, 201);
 });
 
 adminRoutes.patch('/monitors/:id', async (c) => {
@@ -260,7 +278,7 @@ adminRoutes.patch('/monitors/:id', async (c) => {
 
   queuePublicStatusSnapshotRefresh(c);
 
-  return c.json({ monitor: monitorRowToApi(updated) });
+  return c.json({ monitor: monitorRowToApi(updated, null) });
 });
 
 adminRoutes.delete('/monitors/:id', async (c) => {

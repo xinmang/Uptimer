@@ -424,13 +424,15 @@ export function AdminDashboard() {
             ) : (
               <Card className="overflow-hidden">
                 <div className="overflow-x-auto">
-                  <table className="w-full min-w-[600px]">
+                  <table className="w-full min-w-[900px]">
                     <thead className="bg-slate-50 dark:bg-slate-700/50 border-b border-slate-100 dark:border-slate-700">
                       <tr>
                         <th className="px-3 sm:px-4 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">Name</th>
                         <th className="px-3 sm:px-4 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">Type</th>
                         <th className="px-3 sm:px-4 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">Target</th>
                         <th className="px-3 sm:px-4 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">Status</th>
+                        <th className="px-3 sm:px-4 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">Last Check</th>
+                        <th className="px-3 sm:px-4 py-3 text-left text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">Last Error</th>
                         <th className="px-3 sm:px-4 py-3 text-right text-xs font-medium text-slate-500 dark:text-slate-400 uppercase tracking-wide">Actions</th>
                       </tr>
                     </thead>
@@ -443,7 +445,39 @@ export function AdminDashboard() {
                           </td>
                           <td className="px-3 sm:px-4 py-3 text-sm text-slate-500 dark:text-slate-400 truncate max-w-[200px]">{m.target}</td>
                           <td className="px-3 sm:px-4 py-3">
-                            <Badge variant={m.is_active ? 'up' : 'unknown'}>{m.is_active ? 'Active' : 'Paused'}</Badge>
+                            <div className="flex items-center gap-2">
+                              <Badge
+                                variant={
+                                  m.status === 'up'
+                                    ? 'up'
+                                    : m.status === 'down'
+                                      ? 'down'
+                                      : m.status === 'maintenance'
+                                        ? 'maintenance'
+                                        : m.status === 'paused'
+                                          ? 'paused'
+                                          : 'unknown'
+                                }
+                              >
+                                {m.status}
+                              </Badge>
+                              {!m.is_active && <Badge variant="unknown">inactive</Badge>}
+                            </div>
+                          </td>
+                          <td className="px-3 sm:px-4 py-3 text-xs text-slate-500 dark:text-slate-400 whitespace-nowrap">
+                            {m.last_checked_at ? (
+                              <>
+                                {formatDateTime(m.last_checked_at, settings?.site_timezone)}
+                                {m.last_latency_ms !== null ? ` (${m.last_latency_ms}ms)` : ''}
+                              </>
+                            ) : (
+                              '-'
+                            )}
+                          </td>
+                          <td className="px-3 sm:px-4 py-3 text-xs text-slate-500 dark:text-slate-400 max-w-[260px]">
+                            <span className="block truncate" title={m.last_error ?? undefined}>
+                              {m.last_error ? m.last_error : '-'}
+                            </span>
                           </td>
                           <td className="px-3 sm:px-4 py-3 text-right whitespace-nowrap">
                             <div className="flex items-center justify-end gap-1 sm:gap-0">

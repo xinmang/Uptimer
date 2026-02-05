@@ -259,6 +259,12 @@ export interface AdminMonitor {
   is_active: boolean;
   created_at: number;
   updated_at: number;
+
+  // Runtime state (from monitor_state)
+  status: MonitorStatus;
+  last_checked_at: number | null;
+  last_latency_ms: number | null;
+  last_error: string | null;
 }
 
 export interface CreateMonitorInput {
