@@ -71,9 +71,14 @@ export function MaintenanceHistoryPage() {
 
       <main className="max-w-5xl mx-auto px-4 sm:px-6 py-6 sm:py-10">
         {isInitialLoading ? (
-          <Card className="p-6 text-center">
-            <p className="text-slate-500 dark:text-slate-400">Loading…</p>
-          </Card>
+          <div className="space-y-3">
+            {Array.from({ length: 3 }).map((_, idx) => (
+              <div
+                key={idx}
+                className="ui-skeleton h-28 rounded-xl border border-slate-200/70 dark:border-slate-700/70"
+              />
+            ))}
+          </div>
         ) : query.isError ? (
           <Card className="p-6 text-center">
             <p className="text-sm text-red-600 dark:text-red-400">{formatError(query.error) ?? 'Failed to load maintenance windows'}</p>
