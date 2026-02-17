@@ -10,52 +10,52 @@ Source: `.github/workflows/deploy.yml`
 
 ### Secrets
 
-| Name | Required | Description |
-|------|----------|-------------|
-| `CLOUDFLARE_API_TOKEN` | Yes | Cloudflare API authentication (deploy Worker/Pages, manage D1) |
-| `CLOUDFLARE_ACCOUNT_ID` | No (recommended) | Cloudflare Account ID; auto-resolved if not provided |
-| `UPTIMER_ADMIN_TOKEN` | Yes | Admin dashboard access key; written to Worker Secret `ADMIN_TOKEN` automatically |
-| `VITE_ADMIN_PATH` | No | Override admin dashboard path (takes priority over variable) |
+| Name                    | Required         | Description                                                                      |
+| ----------------------- | ---------------- | -------------------------------------------------------------------------------- |
+| `CLOUDFLARE_API_TOKEN`  | Yes              | Cloudflare API authentication (deploy Worker/Pages, manage D1)                   |
+| `CLOUDFLARE_ACCOUNT_ID` | No (recommended) | Cloudflare Account ID; auto-resolved if not provided                             |
+| `UPTIMER_ADMIN_TOKEN`   | Yes              | Admin dashboard access key; written to Worker Secret `ADMIN_TOKEN` automatically |
+| `VITE_ADMIN_PATH`       | No               | Override admin dashboard path (takes priority over variable)                     |
 
 ### Variables
 
-| Name | Default | Description |
-|------|---------|-------------|
-| `UPTIMER_PREFIX` | Repository name slug | Unified resource name prefix |
-| `UPTIMER_WORKER_NAME` | `${UPTIMER_PREFIX}` | Worker name |
-| `UPTIMER_PAGES_PROJECT` | `${UPTIMER_PREFIX}` | Pages project name |
-| `UPTIMER_D1_NAME` | `${UPTIMER_PREFIX}` | D1 database name |
-| `UPTIMER_D1_BINDING` | `DB` | D1 binding name in Worker |
-| `UPTIMER_API_BASE` | Auto-derived or `/api/v1` | API base URL for web build |
-| `UPTIMER_API_ORIGIN` | — | Pages Secret `UPTIMER_API_ORIGIN` value |
-| `VITE_ADMIN_PATH` | — | Admin dashboard path (overridden by Secret if set) |
-| `UPTIMER_ADMIN_PATH` | — | Fallback variable for `VITE_ADMIN_PATH` |
+| Name                    | Default                   | Description                                        |
+| ----------------------- | ------------------------- | -------------------------------------------------- |
+| `UPTIMER_PREFIX`        | Repository name slug      | Unified resource name prefix                       |
+| `UPTIMER_WORKER_NAME`   | `${UPTIMER_PREFIX}`       | Worker name                                        |
+| `UPTIMER_PAGES_PROJECT` | `${UPTIMER_PREFIX}`       | Pages project name                                 |
+| `UPTIMER_D1_NAME`       | `${UPTIMER_PREFIX}`       | D1 database name                                   |
+| `UPTIMER_D1_BINDING`    | `DB`                      | D1 binding name in Worker                          |
+| `UPTIMER_API_BASE`      | Auto-derived or `/api/v1` | API base URL for web build                         |
+| `UPTIMER_API_ORIGIN`    | —                         | Pages Secret `UPTIMER_API_ORIGIN` value            |
+| `VITE_ADMIN_PATH`       | —                         | Admin dashboard path (overridden by Secret if set) |
+| `UPTIMER_ADMIN_PATH`    | —                         | Fallback variable for `VITE_ADMIN_PATH`            |
 
 ## 2. Worker Runtime
 
 ### Secrets
 
-| Name | Required | Description |
-|------|----------|-------------|
-| `ADMIN_TOKEN` | Yes | Admin API Bearer Token |
+| Name          | Required | Description            |
+| ------------- | -------- | ---------------------- |
+| `ADMIN_TOKEN` | Yes      | Admin API Bearer Token |
 
 ### Environment Variables
 
 Source: `apps/worker/wrangler.toml` and `apps/worker/src/env.ts`
 
-| Name | Default | Description |
-|------|---------|-------------|
-| `ADMIN_RATE_LIMIT_MAX` | `60` | Max requests per rate-limit window (admin API) |
-| `ADMIN_RATE_LIMIT_WINDOW_SEC` | `60` | Rate-limit window duration in seconds |
+| Name                          | Default | Description                                    |
+| ----------------------------- | ------- | ---------------------------------------------- |
+| `ADMIN_RATE_LIMIT_MAX`        | `60`    | Max requests per rate-limit window (admin API) |
+| `ADMIN_RATE_LIMIT_WINDOW_SEC` | `60`    | Rate-limit window duration in seconds          |
 
 ## 3. Web Build
 
 Source: `apps/web/.env.example`
 
-| Name | Default | Description |
-|------|---------|-------------|
-| `VITE_ADMIN_PATH` | `/admin` | Admin dashboard route prefix |
-| `VITE_API_BASE` | `/api/v1` | API base URL for frontend requests |
+| Name              | Default   | Description                        |
+| ----------------- | --------- | ---------------------------------- |
+| `VITE_ADMIN_PATH` | `/admin`  | Admin dashboard route prefix       |
+| `VITE_API_BASE`   | `/api/v1` | API base URL for frontend requests |
 
 > `VITE_API_BASE` is computed and injected by the deploy workflow (using `UPTIMER_API_BASE` if set).
 
@@ -65,18 +65,18 @@ Source: `apps/worker/src/schemas/settings.ts`
 
 Configurable via Admin API: `PATCH /api/v1/admin/settings`
 
-| Key | Description |
-|-----|-------------|
-| `site_title` | Status page title |
-| `site_description` | Status page description |
-| `site_locale` | Site language (`auto` / `en` / `zh-CN` / `zh-TW` / `ja` / `es`) |
-| `site_timezone` | IANA timezone identifier |
-| `retention_check_results_days` | Days to retain `check_results` data |
-| `state_failures_to_down_from_up` | Consecutive failures required for UP -> DOWN transition |
-| `state_successes_to_up_from_down` | Consecutive successes required for DOWN -> UP transition |
-| `admin_default_overview_range` | Default time range for admin overview |
-| `admin_default_monitor_range` | Default time range for admin monitor detail |
-| `uptime_rating_level` | Uptime rating thresholds |
+| Key                               | Description                                                     |
+| --------------------------------- | --------------------------------------------------------------- |
+| `site_title`                      | Status page title                                               |
+| `site_description`                | Status page description                                         |
+| `site_locale`                     | Site language (`auto` / `en` / `zh-CN` / `zh-TW` / `ja` / `es`) |
+| `site_timezone`                   | IANA timezone identifier                                        |
+| `retention_check_results_days`    | Days to retain `check_results` data                             |
+| `state_failures_to_down_from_up`  | Consecutive failures required for UP -> DOWN transition         |
+| `state_successes_to_up_from_down` | Consecutive successes required for DOWN -> UP transition        |
+| `admin_default_overview_range`    | Default time range for admin overview                           |
+| `admin_default_monitor_range`     | Default time range for admin monitor detail                     |
+| `uptime_rating_level`             | Uptime rating thresholds                                        |
 
 ## 5. Local Development
 

@@ -33,31 +33,31 @@ Deploy Uptimer to Cloudflare using the built-in GitHub Actions workflow.
 
 ### Required Secrets
 
-| Name | Required | Description |
-|------|----------|-------------|
-| `CLOUDFLARE_API_TOKEN` | Yes | Cloudflare API authentication |
-| `UPTIMER_ADMIN_TOKEN` | Yes | Admin dashboard access key; auto-injected as Worker `ADMIN_TOKEN` secret |
+| Name                   | Required | Description                                                              |
+| ---------------------- | -------- | ------------------------------------------------------------------------ |
+| `CLOUDFLARE_API_TOKEN` | Yes      | Cloudflare API authentication                                            |
+| `UPTIMER_ADMIN_TOKEN`  | Yes      | Admin dashboard access key; auto-injected as Worker `ADMIN_TOKEN` secret |
 
 ### Recommended Secrets
 
-| Name | Description |
-|------|-------------|
+| Name                    | Description                     |
+| ----------------------- | ------------------------------- |
 | `CLOUDFLARE_ACCOUNT_ID` | Avoids auto-resolution failures |
 
 ### Optional Variables
 
 Override default naming and routing:
 
-| Name | Default | Description |
-|------|---------|-------------|
-| `UPTIMER_PREFIX` | Repository name slug | Unified resource name prefix |
-| `UPTIMER_WORKER_NAME` | `${UPTIMER_PREFIX}` | Worker name |
-| `UPTIMER_PAGES_PROJECT` | `${UPTIMER_PREFIX}` | Pages project name |
-| `UPTIMER_D1_NAME` | `${UPTIMER_PREFIX}` | D1 database name |
-| `UPTIMER_D1_BINDING` | `DB` | D1 binding name in Worker |
-| `UPTIMER_API_BASE` | Auto-derived or `/api/v1` | API base URL for web build |
-| `UPTIMER_API_ORIGIN` | — | Pages Secret value |
-| `VITE_ADMIN_PATH` / `UPTIMER_ADMIN_PATH` | — | Custom admin dashboard path |
+| Name                                     | Default                   | Description                  |
+| ---------------------------------------- | ------------------------- | ---------------------------- |
+| `UPTIMER_PREFIX`                         | Repository name slug      | Unified resource name prefix |
+| `UPTIMER_WORKER_NAME`                    | `${UPTIMER_PREFIX}`       | Worker name                  |
+| `UPTIMER_PAGES_PROJECT`                  | `${UPTIMER_PREFIX}`       | Pages project name           |
+| `UPTIMER_D1_NAME`                        | `${UPTIMER_PREFIX}`       | D1 database name             |
+| `UPTIMER_D1_BINDING`                     | `DB`                      | D1 binding name in Worker    |
+| `UPTIMER_API_BASE`                       | Auto-derived or `/api/v1` | API base URL for web build   |
+| `UPTIMER_API_ORIGIN`                     | —                         | Pages Secret value           |
+| `VITE_ADMIN_PATH` / `UPTIMER_ADMIN_PATH` | —                         | Custom admin dashboard path  |
 
 > If no naming variables are set, the workflow uses the repository name slug as the default prefix. This keeps names stable across forks.
 
@@ -141,10 +141,10 @@ Prefer redeploying the last known-good commit:
 
 ## Relationship to CI
 
-| Workflow | Purpose |
-|----------|---------|
-| `ci.yml` | Quality gate: lint, typecheck, test |
-| `deploy.yml` | Production release |
+| Workflow     | Purpose                             |
+| ------------ | ----------------------------------- |
+| `ci.yml`     | Quality gate: lint, typecheck, test |
+| `deploy.yml` | Production release                  |
 
 Recommended branch strategy:
 

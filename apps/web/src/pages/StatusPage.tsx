@@ -415,6 +415,10 @@ export function StatusPage() {
 
     return [...groups.entries()].map(([name, monitors]) => ({ name, monitors }));
   }, [statusQuery.data?.monitors, t]);
+  const monitorNames = useMemo(
+    () => new Map((statusQuery.data?.monitors ?? []).map((m) => [m.id, m.name] as const)),
+    [statusQuery.data?.monitors],
+  );
 
   if (statusQuery.isLoading) {
     return <StatusPageSkeleton />;
@@ -436,7 +440,6 @@ export function StatusPage() {
   const data = statusQuery.data;
   const bannerConfig = getBannerConfig(data.banner.status, t);
   const activeIncidents = data.active_incidents;
-  const monitorNames = new Map(data.monitors.map((m) => [m.id, m.name] as const));
 
   const siteTitle = derivedTitle;
   const timeZone = derivedTimeZone;

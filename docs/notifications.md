@@ -26,16 +26,16 @@ The notification system:
 
 ## Event Types
 
-| Event | Description |
-|-------|-------------|
-| `monitor.down` | Monitor transitioned to DOWN state |
-| `monitor.up` | Monitor transitioned to UP state |
-| `incident.created` | New incident created |
-| `incident.updated` | Incident received an update |
-| `incident.resolved` | Incident marked as resolved |
-| `maintenance.started` | Maintenance window started |
-| `maintenance.ended` | Maintenance window ended |
-| `test.ping` | Test button (always allowed, even if filtered) |
+| Event                 | Description                                    |
+| --------------------- | ---------------------------------------------- |
+| `monitor.down`        | Monitor transitioned to DOWN state             |
+| `monitor.up`          | Monitor transitioned to UP state               |
+| `incident.created`    | New incident created                           |
+| `incident.updated`    | Incident received an update                    |
+| `incident.resolved`   | Incident marked as resolved                    |
+| `maintenance.started` | Maintenance window started                     |
+| `maintenance.ended`   | Maintenance window ended                       |
+| `test.ping`           | Test button (always allowed, even if filtered) |
 
 ## Event Keys (Idempotency)
 
@@ -49,13 +49,13 @@ Each event has a unique `event_key` used for deduplication:
 
 ## Admin API
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/api/v1/admin/notification-channels` | List all channels |
-| POST | `/api/v1/admin/notification-channels` | Create a channel |
-| PATCH | `/api/v1/admin/notification-channels/:id` | Update a channel |
-| DELETE | `/api/v1/admin/notification-channels/:id` | Delete a channel |
-| POST | `/api/v1/admin/notification-channels/:id/test` | Send a test notification |
+| Method | Endpoint                                       | Description              |
+| ------ | ---------------------------------------------- | ------------------------ |
+| GET    | `/api/v1/admin/notification-channels`          | List all channels        |
+| POST   | `/api/v1/admin/notification-channels`          | Create a channel         |
+| PATCH  | `/api/v1/admin/notification-channels/:id`      | Update a channel         |
+| DELETE | `/api/v1/admin/notification-channels/:id`      | Delete a channel         |
+| POST   | `/api/v1/admin/notification-channels/:id/test` | Send a test notification |
 
 The test endpoint generates a `test.ping` event with sample data and returns the delivery record for debugging.
 
@@ -63,17 +63,17 @@ The test endpoint generates a `test.ping` event with sample data and returns the
 
 Webhook channel `config_json` fields (validated by Zod):
 
-| Field | Required | Default | Description |
-|-------|----------|---------|-------------|
-| `url` | Yes | — | Webhook URL (`http://` or `https://` only) |
-| `method` | No | `POST` | HTTP method: `GET`, `POST`, `PUT`, `PATCH`, `DELETE`, `HEAD` |
-| `headers` | No | — | Custom headers object `{ "Header-Name": "value" }`. Values support template rendering. |
-| `timeout_ms` | No | — | Request timeout (1–60000 ms) |
-| `payload_type` | No | `json` | `json`, `param`, or `x-www-form-urlencoded` |
-| `message_template` | No | — | Template for the `message` variable |
-| `payload_template` | No | — | Custom payload template (see below) |
-| `enabled_events` | No | — | Event whitelist array. Empty = all events. `test.ping` always passes. |
-| `signing` | No | — | `{ enabled: boolean, secret_ref: string }` — HMAC-SHA256 signing |
+| Field              | Required | Default | Description                                                                            |
+| ------------------ | -------- | ------- | -------------------------------------------------------------------------------------- |
+| `url`              | Yes      | —       | Webhook URL (`http://` or `https://` only)                                             |
+| `method`           | No       | `POST`  | HTTP method: `GET`, `POST`, `PUT`, `PATCH`, `DELETE`, `HEAD`                           |
+| `headers`          | No       | —       | Custom headers object `{ "Header-Name": "value" }`. Values support template rendering. |
+| `timeout_ms`       | No       | —       | Request timeout (1–60000 ms)                                                           |
+| `payload_type`     | No       | `json`  | `json`, `param`, or `x-www-form-urlencoded`                                            |
+| `message_template` | No       | —       | Template for the `message` variable                                                    |
+| `payload_template` | No       | —       | Custom payload template (see below)                                                    |
+| `enabled_events`   | No       | —       | Event whitelist array. Empty = all events. `test.ping` always passes.                  |
+| `signing`          | No       | —       | `{ enabled: boolean, secret_ref: string }` — HMAC-SHA256 signing                       |
 
 ## Payload Modes
 
@@ -126,17 +126,17 @@ Templates can be used in `message_template`, all string fields in `payload_templ
 
 ### Built-in Variables
 
-| Variable | Type | Description |
-|----------|------|-------------|
-| `event` | string | Event type |
-| `event_id` | string | Idempotency key |
-| `timestamp` | number | Unix seconds |
-| `channel.id` | number | Channel ID |
-| `channel.name` | string | Channel name |
-| `monitor.*` | object | Monitor fields (if applicable) |
-| `state.*` | object | Monitor state fields (if applicable) |
-| `default_message` | string | System-generated default message |
-| `message` | string | Final message (rendered from `message_template` if set) |
+| Variable          | Type   | Description                                             |
+| ----------------- | ------ | ------------------------------------------------------- |
+| `event`           | string | Event type                                              |
+| `event_id`        | string | Idempotency key                                         |
+| `timestamp`       | number | Unix seconds                                            |
+| `channel.id`      | number | Channel ID                                              |
+| `channel.name`    | string | Channel name                                            |
+| `monitor.*`       | object | Monitor fields (if applicable)                          |
+| `state.*`         | object | Monitor state fields (if applicable)                    |
+| `default_message` | string | System-generated default message                        |
+| `message`         | string | Final message (rendered from `message_template` if set) |
 
 > The raw system payload is spread into top-level variables. If the payload contains `monitor`, you can access `{{monitor.name}}` directly.
 
@@ -180,6 +180,7 @@ X-Uptimer-Signature: sha256=<hmac_hex>
 ```
 
 **Signature computation**:
+
 - `message = "<timestamp>.<rawBody>"`
 - `hmac = HMAC-SHA256(secret, message)` as hex
 
@@ -194,10 +195,7 @@ function verify(req, secret) {
   const ts = req.headers['x-uptimer-timestamp'];
   const sig = req.headers['x-uptimer-signature']; // "sha256=..."
   const rawBody = req.rawBody ?? '';
-  const expected = crypto
-    .createHmac('sha256', secret)
-    .update(`${ts}.${rawBody}`)
-    .digest('hex');
+  const expected = crypto.createHmac('sha256', secret).update(`${ts}.${rawBody}`).digest('hex');
   return sig === `sha256=${expected}`;
 }
 ```
@@ -259,24 +257,26 @@ POST /api/v1/admin/notification-channels/:id/test
 ```
 
 The response includes:
+
 - `delivery.status` — `success` or `failed`
 - `delivery.http_status` — HTTP status code (may be null on network errors)
 - `delivery.error` — Error description
 
 **Common errors**:
+
 - `HTTP 400/415`: Receiver rejects the content-type or body structure
 - `Timeout after XXXXms`: Receiver is slow or unreachable
 - `Signing secret not configured: XXX`: Signing enabled but the referenced secret is missing
 
 ### Common "Looks Right But Doesn't Work" Issues
 
-| Symptom | Cause |
-|---------|-------|
-| Receiver gets wrong fields | `payload_template` field names don't match what the receiver expects |
-| Content-Type rejected | Some receivers require exact `application/json` — don't override headers unless necessary |
-| Real events not delivered | `enabled_events` whitelist is active but doesn't include the event type |
-| Channel appears active but no deliveries | `is_active = false` on the channel |
-| Duplicate clicks do nothing | Idempotent deduplication — same `event_key` within 1 second is skipped |
+| Symptom                                  | Cause                                                                                     |
+| ---------------------------------------- | ----------------------------------------------------------------------------------------- |
+| Receiver gets wrong fields               | `payload_template` field names don't match what the receiver expects                      |
+| Content-Type rejected                    | Some receivers require exact `application/json` — don't override headers unless necessary |
+| Real events not delivered                | `enabled_events` whitelist is active but doesn't include the event type                   |
+| Channel appears active but no deliveries | `is_active = false` on the channel                                                        |
+| Duplicate clicks do nothing              | Idempotent deduplication — same `event_key` within 1 second is skipped                    |
 
 ### Query Delivery Records
 
@@ -295,10 +295,10 @@ wrangler d1 execute uptimer --local \
 
 ## Source Code Reference
 
-| Component | File |
-|-----------|------|
-| Webhook dispatch | `apps/worker/src/notify/webhook.ts` |
-| Idempotent dedup | `apps/worker/src/notify/dedupe.ts` |
-| Template engine | `apps/worker/src/notify/template.ts` |
-| Config schema | `packages/db/src/json.ts` |
-| Test endpoint | `apps/worker/src/routes/admin.ts` |
+| Component        | File                                 |
+| ---------------- | ------------------------------------ |
+| Webhook dispatch | `apps/worker/src/notify/webhook.ts`  |
+| Idempotent dedup | `apps/worker/src/notify/dedupe.ts`   |
+| Template engine  | `apps/worker/src/notify/template.ts` |
+| Config schema    | `packages/db/src/json.ts`            |
+| Test endpoint    | `apps/worker/src/routes/admin.ts`    |

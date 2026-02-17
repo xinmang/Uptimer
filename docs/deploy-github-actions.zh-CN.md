@@ -33,31 +33,31 @@
 
 ### 必需密钥
 
-| 名称 | 必需 | 说明 |
-|------|------|------|
-| `CLOUDFLARE_API_TOKEN` | 是 | Cloudflare API 认证 |
-| `UPTIMER_ADMIN_TOKEN` | 是 | 管理面板访问密钥；自动写入 Worker 的 `ADMIN_TOKEN` 密钥 |
+| 名称                   | 必需 | 说明                                                    |
+| ---------------------- | ---- | ------------------------------------------------------- |
+| `CLOUDFLARE_API_TOKEN` | 是   | Cloudflare API 认证                                     |
+| `UPTIMER_ADMIN_TOKEN`  | 是   | 管理面板访问密钥；自动写入 Worker 的 `ADMIN_TOKEN` 密钥 |
 
 ### 推荐密钥
 
-| 名称 | 说明 |
-|------|------|
+| 名称                    | 说明             |
+| ----------------------- | ---------------- |
 | `CLOUDFLARE_ACCOUNT_ID` | 避免自动解析失败 |
 
 ### 可选变量
 
 覆盖默认命名与路由：
 
-| 名称 | 默认值 | 说明 |
-|------|--------|------|
-| `UPTIMER_PREFIX` | 仓库名 slug | 统一资源名前缀 |
-| `UPTIMER_WORKER_NAME` | `${UPTIMER_PREFIX}` | Worker 名称 |
-| `UPTIMER_PAGES_PROJECT` | `${UPTIMER_PREFIX}` | Pages 项目名 |
-| `UPTIMER_D1_NAME` | `${UPTIMER_PREFIX}` | D1 数据库名 |
-| `UPTIMER_D1_BINDING` | `DB` | Worker 中 D1 binding 名称 |
-| `UPTIMER_API_BASE` | 自动推导或 `/api/v1` | Web 构建时的 API 基础路径 |
-| `UPTIMER_API_ORIGIN` | — | Pages Secret 值 |
-| `VITE_ADMIN_PATH` / `UPTIMER_ADMIN_PATH` | — | 自定义管理后台路径 |
+| 名称                                     | 默认值               | 说明                      |
+| ---------------------------------------- | -------------------- | ------------------------- |
+| `UPTIMER_PREFIX`                         | 仓库名 slug          | 统一资源名前缀            |
+| `UPTIMER_WORKER_NAME`                    | `${UPTIMER_PREFIX}`  | Worker 名称               |
+| `UPTIMER_PAGES_PROJECT`                  | `${UPTIMER_PREFIX}`  | Pages 项目名              |
+| `UPTIMER_D1_NAME`                        | `${UPTIMER_PREFIX}`  | D1 数据库名               |
+| `UPTIMER_D1_BINDING`                     | `DB`                 | Worker 中 D1 binding 名称 |
+| `UPTIMER_API_BASE`                       | 自动推导或 `/api/v1` | Web 构建时的 API 基础路径 |
+| `UPTIMER_API_ORIGIN`                     | —                    | Pages Secret 值           |
+| `VITE_ADMIN_PATH` / `UPTIMER_ADMIN_PATH` | —                    | 自定义管理后台路径        |
 
 > 若不配置命名变量，工作流会使用仓库名 slug 作为默认前缀。这在 fork 场景下能保持命名稳定。
 
@@ -141,10 +141,10 @@ monitors, monitor_state, check_results, outages, settings
 
 ## 与 CI 的关系
 
-| 工作流 | 用途 |
-|--------|------|
-| `ci.yml` | 质量门禁：lint、typecheck、test |
-| `deploy.yml` | 生产发布 |
+| 工作流       | 用途                            |
+| ------------ | ------------------------------- |
+| `ci.yml`     | 质量门禁：lint、typecheck、test |
+| `deploy.yml` | 生产发布                        |
 
 推荐的分支策略：
 

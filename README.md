@@ -28,29 +28,34 @@ English | **[中文](README.zh-CN.md)**
 ## Features
 
 **Monitoring**
+
 - HTTP(S) probes with custom headers, body, status code & keyword assertions
 - TCP port connectivity checks
 - Configurable timeouts, retry thresholds, and flapping control
 - Automatic state machine: UP / DOWN / MAINTENANCE / PAUSED / UNKNOWN
 
 **Status Page**
+
 - Public-facing status page with real-time aggregate status
 - Per-monitor uptime percentage and latency charts
 - Active incidents and maintenance windows
 - Multi-language support (en, zh-CN, zh-TW, ja, es)
 
 **Incident Management**
+
 - Create, update, and resolve incidents with timeline
 - Schedule maintenance windows
 - All visible on the public status page
 
 **Notifications**
+
 - Webhook notifications to Discord, Slack, ntfy, or any HTTP endpoint
 - Customizable message & payload templates with magic variables
 - Optional HMAC-SHA256 signature verification
 - Idempotent delivery with deduplication
 
 **Admin Dashboard**
+
 - Monitor CRUD with live status overview
 - Notification channel management with test button
 - Analytics with uptime/latency charts and CSV export
@@ -82,14 +87,14 @@ Admin ─────────►│  Workers (Hono API)                     
 
 ## Tech Stack
 
-| Layer | Technology |
-|-------|-----------|
-| Frontend | React 18, Vite, TypeScript, Tailwind CSS, TanStack Query, Recharts |
-| Backend | Cloudflare Workers, Hono, Zod |
-| Database | Cloudflare D1 (SQLite), Drizzle ORM |
-| Hosting | Cloudflare Pages (frontend), Workers (API) |
-| CI/CD | GitHub Actions |
-| Package Manager | pnpm (monorepo) |
+| Layer           | Technology                                                         |
+| --------------- | ------------------------------------------------------------------ |
+| Frontend        | React 18, Vite, TypeScript, Tailwind CSS, TanStack Query, Recharts |
+| Backend         | Cloudflare Workers, Hono, Zod                                      |
+| Database        | Cloudflare D1 (SQLite), Drizzle ORM                                |
+| Hosting         | Cloudflare Pages (frontend), Workers (API)                         |
+| CI/CD           | GitHub Actions                                                     |
+| Package Manager | pnpm (monorepo)                                                    |
 
 ## Quick Deploy (5 Steps)
 
@@ -112,10 +117,10 @@ Click the **Fork** button at the top-right of this repository to create your own
 
 Go to your forked repo → **Settings** → **Secrets and variables** → **Actions** → **New repository secret**, and add:
 
-| Secret Name | Value | Required |
-|---|---|:---:|
-| `CLOUDFLARE_API_TOKEN` | Token from Step 2 | Yes |
-| `UPTIMER_ADMIN_TOKEN` | Any strong string (this is your admin dashboard password) | Yes |
+| Secret Name             | Value                                                                                                         |  Required   |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------- | :---------: |
+| `CLOUDFLARE_API_TOKEN`  | Token from Step 2                                                                                             |     Yes     |
+| `UPTIMER_ADMIN_TOKEN`   | Any strong string (this is your admin dashboard password)                                                     |     Yes     |
 | `CLOUDFLARE_ACCOUNT_ID` | Your [Cloudflare Account ID](https://developers.cloudflare.com/fundamentals/setup/find-account-and-zone-ids/) | Recommended |
 
 ### Step 4 — Run GitHub Actions
@@ -123,6 +128,7 @@ Go to your forked repo → **Settings** → **Secrets and variables** → **Acti
 Go to **Actions** → **Deploy to Cloudflare** → **Run workflow** (or simply push a commit to `main`/`master`).
 
 The workflow automatically:
+
 - Creates the D1 database and runs migrations
 - Deploys the Worker (API + cron-based monitoring)
 - Builds and deploys the Pages frontend (status page)
@@ -171,6 +177,7 @@ pnpm dev
 ```
 
 Default addresses:
+
 - **Status page**: http://localhost:5173
 - **Admin dashboard**: http://localhost:5173/admin
 - **API**: http://localhost:8787/api/v1
@@ -181,12 +188,12 @@ Default addresses:
 
 ## Documentation
 
-| Document | Description |
-|----------|-------------|
-| [Deployment Guide](docs/deploy-github-actions.md) ([中文](docs/deploy-github-actions.zh-CN.md)) | Full GitHub Actions deployment walkthrough |
+| Document                                                                                                   | Description                                                |
+| ---------------------------------------------------------------------------------------------------------- | ---------------------------------------------------------- |
+| [Deployment Guide](docs/deploy-github-actions.md) ([中文](docs/deploy-github-actions.zh-CN.md))            | Full GitHub Actions deployment walkthrough                 |
 | [Configuration Reference](docs/configuration-reference.md) ([中文](docs/configuration-reference.zh-CN.md)) | All configurable parameters (secrets, variables, settings) |
-| [Notification System](docs/notifications.md) ([中文](docs/notifications.zh-CN.md)) | Webhook setup, templates, signatures, troubleshooting |
-| [Local Development](Develop/LOCAL-TESTING.md) | Local setup, seed data, testing procedures |
+| [Notification System](docs/notifications.md) ([中文](docs/notifications.zh-CN.md))                         | Webhook setup, templates, signatures, troubleshooting      |
+| [Local Development](Develop/LOCAL-TESTING.md)                                                              | Local setup, seed data, testing procedures                 |
 
 ## Quality Checks
 

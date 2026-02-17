@@ -26,16 +26,16 @@ Uptimer 的通知系统在监控状态变化或事件创建/更新时发送 Webh
 
 ## 事件类型
 
-| 事件 | 说明 |
-|------|------|
-| `monitor.down` | 监控项转为 DOWN 状态 |
-| `monitor.up` | 监控项转为 UP 状态 |
-| `incident.created` | 新事件创建 |
-| `incident.updated` | 事件收到更新 |
-| `incident.resolved` | 事件被标记为已解决 |
-| `maintenance.started` | 维护窗口开始 |
-| `maintenance.ended` | 维护窗口结束 |
-| `test.ping` | 测试按钮（即使被过滤也始终允许） |
+| 事件                  | 说明                             |
+| --------------------- | -------------------------------- |
+| `monitor.down`        | 监控项转为 DOWN 状态             |
+| `monitor.up`          | 监控项转为 UP 状态               |
+| `incident.created`    | 新事件创建                       |
+| `incident.updated`    | 事件收到更新                     |
+| `incident.resolved`   | 事件被标记为已解决               |
+| `maintenance.started` | 维护窗口开始                     |
+| `maintenance.ended`   | 维护窗口结束                     |
+| `test.ping`           | 测试按钮（即使被过滤也始终允许） |
 
 ## 事件键（幂等）
 
@@ -49,13 +49,13 @@ Uptimer 的通知系统在监控状态变化或事件创建/更新时发送 Webh
 
 ## 管理端 API
 
-| 方法 | 端点 | 说明 |
-|------|------|------|
-| GET | `/api/v1/admin/notification-channels` | 列出所有渠道 |
-| POST | `/api/v1/admin/notification-channels` | 创建渠道 |
-| PATCH | `/api/v1/admin/notification-channels/:id` | 更新渠道 |
-| DELETE | `/api/v1/admin/notification-channels/:id` | 删除渠道 |
-| POST | `/api/v1/admin/notification-channels/:id/test` | 发送测试通知 |
+| 方法   | 端点                                           | 说明         |
+| ------ | ---------------------------------------------- | ------------ |
+| GET    | `/api/v1/admin/notification-channels`          | 列出所有渠道 |
+| POST   | `/api/v1/admin/notification-channels`          | 创建渠道     |
+| PATCH  | `/api/v1/admin/notification-channels/:id`      | 更新渠道     |
+| DELETE | `/api/v1/admin/notification-channels/:id`      | 删除渠道     |
+| POST   | `/api/v1/admin/notification-channels/:id/test` | 发送测试通知 |
 
 测试端点会生成一个 `test.ping` 事件（带示例数据）并返回投递记录，用于调试。
 
@@ -63,17 +63,17 @@ Uptimer 的通知系统在监控状态变化或事件创建/更新时发送 Webh
 
 Webhook 渠道的 `config_json` 字段（由 Zod 校验）：
 
-| 字段 | 必填 | 默认值 | 说明 |
-|------|------|--------|------|
-| `url` | 是 | — | Webhook URL（仅允许 `http://` 或 `https://`） |
-| `method` | 否 | `POST` | HTTP 方法：`GET`、`POST`、`PUT`、`PATCH`、`DELETE`、`HEAD` |
-| `headers` | 否 | — | 自定义 Headers 对象 `{ "Header-Name": "value" }`。Value 支持模板渲染。 |
-| `timeout_ms` | 否 | — | 请求超时（1–60000 ms） |
-| `payload_type` | 否 | `json` | `json`、`param` 或 `x-www-form-urlencoded` |
-| `message_template` | 否 | — | `message` 变量的模板 |
-| `payload_template` | 否 | — | 自定义 Payload 模板（详见下文） |
-| `enabled_events` | 否 | — | 事件白名单数组。空 = 全部事件。`test.ping` 始终通过。 |
-| `signing` | 否 | — | `{ enabled: boolean, secret_ref: string }` — HMAC-SHA256 签名 |
+| 字段               | 必填 | 默认值 | 说明                                                                   |
+| ------------------ | ---- | ------ | ---------------------------------------------------------------------- |
+| `url`              | 是   | —      | Webhook URL（仅允许 `http://` 或 `https://`）                          |
+| `method`           | 否   | `POST` | HTTP 方法：`GET`、`POST`、`PUT`、`PATCH`、`DELETE`、`HEAD`             |
+| `headers`          | 否   | —      | 自定义 Headers 对象 `{ "Header-Name": "value" }`。Value 支持模板渲染。 |
+| `timeout_ms`       | 否   | —      | 请求超时（1–60000 ms）                                                 |
+| `payload_type`     | 否   | `json` | `json`、`param` 或 `x-www-form-urlencoded`                             |
+| `message_template` | 否   | —      | `message` 变量的模板                                                   |
+| `payload_template` | 否   | —      | 自定义 Payload 模板（详见下文）                                        |
+| `enabled_events`   | 否   | —      | 事件白名单数组。空 = 全部事件。`test.ping` 始终通过。                  |
+| `signing`          | 否   | —      | `{ enabled: boolean, secret_ref: string }` — HMAC-SHA256 签名          |
 
 ## Payload 模式
 
@@ -126,17 +126,17 @@ event, event_id, timestamp, message
 
 ### 内置变量
 
-| 变量 | 类型 | 说明 |
-|------|------|------|
-| `event` | string | 事件类型 |
-| `event_id` | string | 幂等键 |
-| `timestamp` | number | Unix 秒 |
-| `channel.id` | number | 渠道 ID |
-| `channel.name` | string | 渠道名称 |
-| `monitor.*` | object | 监控项字段（如适用） |
-| `state.*` | object | 监控状态字段（如适用） |
-| `default_message` | string | 系统生成的默认消息 |
-| `message` | string | 最终消息（若设置了 `message_template` 则为渲染结果） |
+| 变量              | 类型   | 说明                                                 |
+| ----------------- | ------ | ---------------------------------------------------- |
+| `event`           | string | 事件类型                                             |
+| `event_id`        | string | 幂等键                                               |
+| `timestamp`       | number | Unix 秒                                              |
+| `channel.id`      | number | 渠道 ID                                              |
+| `channel.name`    | string | 渠道名称                                             |
+| `monitor.*`       | object | 监控项字段（如适用）                                 |
+| `state.*`         | object | 监控状态字段（如适用）                               |
+| `default_message` | string | 系统生成的默认消息                                   |
+| `message`         | string | 最终消息（若设置了 `message_template` 则为渲染结果） |
 
 > 系统原始 Payload 会展开到顶层变量。如果 Payload 包含 `monitor`，可直接使用 `{{monitor.name}}`。
 
@@ -180,6 +180,7 @@ X-Uptimer-Signature: sha256=<hmac_hex>
 ```
 
 **签名计算**：
+
 - `message = "<timestamp>.<rawBody>"`
 - `hmac = HMAC-SHA256(secret, message)` 的十六进制值
 
@@ -194,10 +195,7 @@ function verify(req, secret) {
   const ts = req.headers['x-uptimer-timestamp'];
   const sig = req.headers['x-uptimer-signature']; // "sha256=..."
   const rawBody = req.rawBody ?? '';
-  const expected = crypto
-    .createHmac('sha256', secret)
-    .update(`${ts}.${rawBody}`)
-    .digest('hex');
+  const expected = crypto.createHmac('sha256', secret).update(`${ts}.${rawBody}`).digest('hex');
   return sig === `sha256=${expected}`;
 }
 ```
@@ -259,24 +257,26 @@ POST /api/v1/admin/notification-channels/:id/test
 ```
 
 返回内容包含：
+
 - `delivery.status` — `success` 或 `failed`
 - `delivery.http_status` — HTTP 状态码（网络错误时可能为 null）
 - `delivery.error` — 错误描述
 
 **常见错误**：
+
 - `HTTP 400/415`：接收端拒绝 Content-Type 或 body 结构
 - `Timeout after XXXXms`：接收端响应慢或不可达
 - `Signing secret not configured: XXX`：开启了签名但未配置对应 Secret
 
 ### 常见"配置看起来对但不工作"的原因
 
-| 症状 | 原因 |
-|------|------|
-| 接收端收到错误字段 | `payload_template` 中的字段名与接收端期望的不匹配 |
-| Content-Type 被拒绝 | 某些接收端要求精确的 `application/json` — 非必要不要覆盖 headers |
-| 真实事件未投递 | `enabled_events` 白名单生效，但未包含该事件类型 |
-| 渠道显示活跃但无投递 | 渠道的 `is_active = false` |
-| 重复点击无响应 | 幂等去重 — 同一 `event_key` 在 1 秒内被跳过 |
+| 症状                 | 原因                                                             |
+| -------------------- | ---------------------------------------------------------------- |
+| 接收端收到错误字段   | `payload_template` 中的字段名与接收端期望的不匹配                |
+| Content-Type 被拒绝  | 某些接收端要求精确的 `application/json` — 非必要不要覆盖 headers |
+| 真实事件未投递       | `enabled_events` 白名单生效，但未包含该事件类型                  |
+| 渠道显示活跃但无投递 | 渠道的 `is_active = false`                                       |
+| 重复点击无响应       | 幂等去重 — 同一 `event_key` 在 1 秒内被跳过                      |
 
 ### 查询投递记录
 
@@ -295,10 +295,10 @@ wrangler d1 execute uptimer --local \
 
 ## 源码参考
 
-| 组件 | 文件 |
-|------|------|
-| Webhook 派发 | `apps/worker/src/notify/webhook.ts` |
-| 幂等去重 | `apps/worker/src/notify/dedupe.ts` |
-| 模板引擎 | `apps/worker/src/notify/template.ts` |
-| 配置 Schema | `packages/db/src/json.ts` |
-| 测试端点 | `apps/worker/src/routes/admin.ts` |
+| 组件         | 文件                                 |
+| ------------ | ------------------------------------ |
+| Webhook 派发 | `apps/worker/src/notify/webhook.ts`  |
+| 幂等去重     | `apps/worker/src/notify/dedupe.ts`   |
+| 模板引擎     | `apps/worker/src/notify/template.ts` |
+| 配置 Schema  | `packages/db/src/json.ts`            |
+| 测试端点     | `apps/worker/src/routes/admin.ts`    |

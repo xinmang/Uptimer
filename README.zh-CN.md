@@ -28,29 +28,34 @@
 ## 功能特性
 
 **监控**
+
 - HTTP(S) 探测，支持自定义 Headers、Body、状态码与关键词断言
 - TCP 端口连通性检测
 - 可配置的超时、重试阈值与抖动控制
 - 自动状态机：UP / DOWN / MAINTENANCE / PAUSED / UNKNOWN
 
 **状态页**
+
 - 面向公众的状态页，实时展示聚合状态
 - 每个监控项的可用率百分比与延迟图表
 - 当前活跃的事件与维护窗口
 - 多语言支持（en、zh-CN、zh-TW、ja、es）
 
 **事件管理**
+
 - 创建、更新、解决事件，附带时间线
 - 计划维护窗口
 - 所有事件在公共状态页可见
 
 **通知**
+
 - Webhook 通知至 Discord、Slack、ntfy 或任意 HTTP 端点
 - 可自定义的消息与 Payload 模板，支持魔法变量
 - 可选的 HMAC-SHA256 签名验证
 - 幂等投递与去重
 
 **管理后台**
+
 - 监控项 CRUD 与实时状态概览
 - 通知渠道管理，支持测试按钮
 - 分析面板，含可用率/延迟图表与 CSV 导出
@@ -82,14 +87,14 @@ Admin ─────────►│  Workers (Hono API)                     
 
 ## 技术栈
 
-| 层级 | 技术 |
-|------|------|
-| 前端 | React 18, Vite, TypeScript, Tailwind CSS, TanStack Query, Recharts |
-| 后端 | Cloudflare Workers, Hono, Zod |
-| 数据库 | Cloudflare D1 (SQLite), Drizzle ORM |
-| 托管 | Cloudflare Pages（前端）、Workers（API） |
-| CI/CD | GitHub Actions |
-| 包管理 | pnpm（monorepo） |
+| 层级   | 技术                                                               |
+| ------ | ------------------------------------------------------------------ |
+| 前端   | React 18, Vite, TypeScript, Tailwind CSS, TanStack Query, Recharts |
+| 后端   | Cloudflare Workers, Hono, Zod                                      |
+| 数据库 | Cloudflare D1 (SQLite), Drizzle ORM                                |
+| 托管   | Cloudflare Pages（前端）、Workers（API）                           |
+| CI/CD  | GitHub Actions                                                     |
+| 包管理 | pnpm（monorepo）                                                   |
 
 ## 快速部署（5 步完成）
 
@@ -112,17 +117,18 @@ Admin ─────────►│  Workers (Hono API)                     
 
 进入你 Fork 的仓库 → **Settings** → **Secrets and variables** → **Actions** → **New repository secret**，添加：
 
-| Secret 名称 | 值 | 是否必填 |
-|---|---|:---:|
-| `CLOUDFLARE_API_TOKEN` | 第 2 步获取的 Token | 必填 |
-| `UPTIMER_ADMIN_TOKEN` | 任意强密码字符串（用于登录管理后台） | 必填 |
-| `CLOUDFLARE_ACCOUNT_ID` | 你的 [Cloudflare Account ID](https://developers.cloudflare.com/fundamentals/setup/find-account-and-zone-ids/) | 推荐 |
+| Secret 名称             | 值                                                                                                            | 是否必填 |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------- | :------: |
+| `CLOUDFLARE_API_TOKEN`  | 第 2 步获取的 Token                                                                                           |   必填   |
+| `UPTIMER_ADMIN_TOKEN`   | 任意强密码字符串（用于登录管理后台）                                                                          |   必填   |
+| `CLOUDFLARE_ACCOUNT_ID` | 你的 [Cloudflare Account ID](https://developers.cloudflare.com/fundamentals/setup/find-account-and-zone-ids/) |   推荐   |
 
 ### 第 4 步 — 运行 GitHub Actions
 
 进入 **Actions** → **Deploy to Cloudflare** → **Run workflow**（或直接向 `main`/`master` 推送一次提交）。
 
 工作流会自动完成：
+
 - 创建 D1 数据库并执行迁移
 - 部署 Worker（API + 定时监控任务）
 - 构建并部署 Pages 前端（状态页）
@@ -171,6 +177,7 @@ pnpm dev
 ```
 
 默认地址：
+
 - **状态页**：http://localhost:5173
 - **管理后台**：http://localhost:5173/admin
 - **API**：http://localhost:8787/api/v1
@@ -181,12 +188,12 @@ pnpm dev
 
 ## 文档
 
-| 文档 | 说明 |
-|------|------|
-| [部署指南](docs/deploy-github-actions.zh-CN.md) | GitHub Actions 部署完整流程 |
+| 文档                                              | 说明                               |
+| ------------------------------------------------- | ---------------------------------- |
+| [部署指南](docs/deploy-github-actions.zh-CN.md)   | GitHub Actions 部署完整流程        |
 | [配置参考](docs/configuration-reference.zh-CN.md) | 所有可配置参数（密钥、变量、设置） |
-| [通知系统](docs/notifications.zh-CN.md) | Webhook 配置、模板、签名、故障排除 |
-| [本地开发](Develop/LOCAL-TESTING.md) | 本地环境搭建、种子数据、测试流程 |
+| [通知系统](docs/notifications.zh-CN.md)           | Webhook 配置、模板、签名、故障排除 |
+| [本地开发](Develop/LOCAL-TESTING.md)              | 本地环境搭建、种子数据、测试流程   |
 
 ## 质量检查
 

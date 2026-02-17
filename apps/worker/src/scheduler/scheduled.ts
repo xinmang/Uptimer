@@ -63,6 +63,18 @@ type NotifyContext = {
   channels: WebhookChannelWithMeta[];
 };
 
+function scheduleSnapshotRefresh(env: Env, ctx: ExecutionContext, now: number): void {
+  ctx.waitUntil(
+    refreshPublicStatusSnapshot({
+      db: env.DB,
+      now,
+      compute: () => computePublicStatusPayload(env.DB, now),
+    }).catch((err) => {
+      console.warn('scheduled: status snapshot refresh failed', err);
+    }),
+  );
+}
+
 async function listActiveWebhookChannels(db: D1Database): Promise<WebhookChannelWithMeta[]> {
   const { results } = await db
     .prepare(
@@ -558,14 +570,17 @@ export async function runScheduledTick(env: Env, ctx: ExecutionContext): Promise
     return;
   }
 
-  const channels = await listActiveWebhookChannels(env.DB);
+  const [channels, settings, due] = await Promise.all([
+    listActiveWebhookChannels(env.DB),
+    readSettings(env.DB),
+    listDueMonitors(env.DB, checkedAt),
+  ]);
+
   const notify: NotifyContext | null =
     channels.length === 0
       ? null
       : { ctx, envRecord: env as unknown as Record<string, unknown>, channels };
 
-  // Load global settings once per tick.
-  const settings = await readSettings(env.DB);
   const stateMachineConfig = {
     failuresToDownFromUp: settings.state_failures_to_down_from_up,
     successesToUpFromDown: settings.state_successes_to_up_from_down,
@@ -576,8 +591,10 @@ export async function runScheduledTick(env: Env, ctx: ExecutionContext): Promise
   if (notify) {
     const lookbackStart = Math.max(0, now - MAINTENANCE_EVENT_LOOKBACK_SECONDS);
 
-    const started = await listMaintenanceWindowsStartedBetween(env.DB, lookbackStart, now);
-    const ended = await listMaintenanceWindowsEndedBetween(env.DB, lookbackStart, now);
+    const [started, ended] = await Promise.all([
+      listMaintenanceWindowsStartedBetween(env.DB, lookbackStart, now),
+      listMaintenanceWindowsEndedBetween(env.DB, lookbackStart, now),
+    ]);
 
     const windowIds = [...new Set([...started.map((w) => w.id), ...ended.map((w) => w.id)])];
     const monitorIdsByWindowId = await listMaintenanceWindowMonitorIdsByWindowId(env.DB, windowIds);
@@ -637,27 +654,18 @@ export async function runScheduledTick(env: Env, ctx: ExecutionContext): Promise
     }
   }
 
-  const due = await listDueMonitors(env.DB, checkedAt);
   if (due.length === 0) {
     // Still refresh snapshots even if no monitors are due.
-    const snapshotNow = Math.floor(Date.now() / 1000);
-    ctx.waitUntil(
-      refreshPublicStatusSnapshot({
-        db: env.DB,
-        now: snapshotNow,
-        compute: () => computePublicStatusPayload(env.DB, snapshotNow),
-      }).catch((err) => {
-        console.warn('scheduled: status snapshot refresh failed', err);
-      }),
-    );
+    scheduleSnapshotRefresh(env, ctx, Math.floor(Date.now() / 1000));
     return;
   }
 
   // Maintenance suppression is monitor-scoped.
+  const dueMonitorIds = due.map((m) => m.id);
   const suppressedMonitorIds = await listMaintenanceSuppressedMonitorIds(
     env.DB,
     now,
-    due.map((m) => m.id),
+    dueMonitorIds,
   );
 
   const limit = pLimit(CHECK_CONCURRENCY);
@@ -685,14 +693,5 @@ export async function runScheduledTick(env: Env, ctx: ExecutionContext): Promise
 
   // Keep the public status snapshot fresh so the status page can load quickly.
   // Best-effort: ignore errors so monitoring checks are not impacted.
-  const snapshotNow = Math.floor(Date.now() / 1000);
-  ctx.waitUntil(
-    refreshPublicStatusSnapshot({
-      db: env.DB,
-      now: snapshotNow,
-      compute: () => computePublicStatusPayload(env.DB, snapshotNow),
-    }).catch((err) => {
-      console.warn('scheduled: status snapshot refresh failed', err);
-    }),
-  );
+  scheduleSnapshotRefresh(env, ctx, Math.floor(Date.now() / 1000));
 }

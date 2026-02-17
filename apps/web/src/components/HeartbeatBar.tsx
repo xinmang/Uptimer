@@ -50,17 +50,25 @@ interface DisplayHeartbeat extends Heartbeat {
 }
 
 function buildLatencyScale(heartbeats: DisplayHeartbeat[]): LatencyScale | null {
-  const latencies = heartbeats
-    .filter((hb) => hb.status === 'up' && hb.latency_ms !== null)
-    .map((hb) => hb.latency_ms as number);
+  const latencies: number[] = [];
+  for (const hb of heartbeats) {
+    if (hb.status !== 'up') continue;
+    if (typeof hb.latency_ms !== 'number' || !Number.isFinite(hb.latency_ms)) continue;
+    latencies.push(hb.latency_ms);
+  }
 
   if (latencies.length === 0) return null;
 
   const ceiling = suggestLatencyAxisCeiling(latencies);
-  const displayLatencies = latencies.map((latency) => clampLatencyToCeiling(latency, ceiling));
+  let min = Number.POSITIVE_INFINITY;
+  let max = Number.NEGATIVE_INFINITY;
+  for (const latency of latencies) {
+    const display = clampLatencyToCeiling(latency, ceiling);
+    if (display < min) min = display;
+    if (display > max) max = display;
+  }
 
-  const min = Math.min(...displayLatencies);
-  const max = Math.max(...displayLatencies);
+  if (!Number.isFinite(min) || !Number.isFinite(max)) return null;
   return { min, span: Math.max(1, max - min), ceiling };
 }
 
@@ -158,25 +166,34 @@ function aggregateHeartbeats(heartbeats: Heartbeat[], slots: number): DisplayHea
   const groupSize = Math.ceil(chronological.length / slots);
   const groups: DisplayHeartbeat[] = [];
 
-  for (let i = 0; i < chronological.length; i += groupSize) {
-    const group = chronological.slice(i, i + groupSize);
-    if (group.length === 0) continue;
-    const first = group[0];
-    const last = group[group.length - 1];
+  for (let start = 0; start < chronological.length; start += groupSize) {
+    const endExclusive = Math.min(chronological.length, start + groupSize);
+    const first = chronological[start];
+    const last = chronological[endExclusive - 1];
     if (!first || !last) continue;
 
-    const worst = group.reduce((currentWorst, hb) =>
-      statusPriority(hb.status) > statusPriority(currentWorst.status) ? hb : currentWorst,
-    );
-    const latencySamples = group
-      .filter((hb) => hb.status === 'up' && hb.latency_ms !== null)
-      .map((hb) => hb.latency_ms as number);
-    const avgLatency =
-      latencySamples.length > 0
-        ? Math.round(
-            latencySamples.reduce((sum, latency) => sum + latency, 0) / latencySamples.length,
-          )
-        : null;
+    let worst = first;
+    let latencySum = 0;
+    let latencyCount = 0;
+    for (let i = start; i < endExclusive; i++) {
+      const hb = chronological[i];
+      if (!hb) continue;
+
+      if (statusPriority(hb.status) > statusPriority(worst.status)) {
+        worst = hb;
+      }
+
+      if (
+        hb.status === 'up' &&
+        typeof hb.latency_ms === 'number' &&
+        Number.isFinite(hb.latency_ms)
+      ) {
+        latencySum += hb.latency_ms;
+        latencyCount++;
+      }
+    }
+
+    const avgLatency = latencyCount > 0 ? Math.round(latencySum / latencyCount) : null;
 
     groups.push({
       checked_at: last.checked_at,
@@ -184,7 +201,7 @@ function aggregateHeartbeats(heartbeats: Heartbeat[], slots: number): DisplayHea
       latency_ms: avgLatency,
       from_checked_at: first.checked_at,
       to_checked_at: last.checked_at,
-      sample_count: group.length,
+      sample_count: endExclusive - start,
     });
   }
 

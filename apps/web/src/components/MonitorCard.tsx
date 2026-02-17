@@ -30,17 +30,27 @@ function getHeartbeatLatencyStats(heartbeats: PublicMonitor['heartbeats']): {
   avgMs: number | null;
   slowestMs: number | null;
 } {
-  const latencies = heartbeats
-    .filter((hb) => hb.status === 'up' && hb.latency_ms !== null)
-    .map((hb) => hb.latency_ms as number);
+  let fastestMs = Number.POSITIVE_INFINITY;
+  let slowestMs = Number.NEGATIVE_INFINITY;
+  let latencySum = 0;
+  let latencyCount = 0;
 
-  if (latencies.length === 0) {
+  for (const hb of heartbeats) {
+    if (hb.status !== 'up') continue;
+    if (typeof hb.latency_ms !== 'number' || !Number.isFinite(hb.latency_ms)) continue;
+
+    const latency = hb.latency_ms;
+    if (latency < fastestMs) fastestMs = latency;
+    if (latency > slowestMs) slowestMs = latency;
+    latencySum += latency;
+    latencyCount++;
+  }
+
+  if (latencyCount === 0) {
     return { fastestMs: null, avgMs: null, slowestMs: null };
   }
 
-  const fastestMs = Math.min(...latencies);
-  const slowestMs = Math.max(...latencies);
-  const avgMs = Math.round(latencies.reduce((sum, latency) => sum + latency, 0) / latencies.length);
+  const avgMs = Math.round(latencySum / latencyCount);
 
   return { fastestMs, avgMs, slowestMs };
 }
